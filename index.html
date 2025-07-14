@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Marketing Report - June 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A dashboard-style SPA with tabbed navigation to switch between 'Social Media' and 'Google Business' views. This structure was chosen to separate distinct marketing channels, preventing information overload and allowing users to focus on one area at a time. The flow starts with an overview, then allows drilling into specific platform data via clicks. Key activities and recommendations are presented as clear, static lists within their relevant sections. This is more usable than a linear report as it facilitates direct comparison and focused analysis. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: High-level KPIs (Views, Reach, etc.). Goal: Inform. Viz: Large stat cards. Interaction: None. Justification: Immediate visibility of key numbers. Method: HTML/Tailwind.
+        - Report Info: Follower vs. Non-follower breakdowns. Goal: Organize/Compare. Viz: Donut Charts. Interaction: Hover tooltips. Justification: Ideal for showing part-to-whole data composition. Library: Chart.js/Canvas.
+        - Report Info: Google Business Interaction types. Goal: Compare. Viz: Bar Chart. Interaction: Hover tooltips. Justification: Clearly compares volumes of different categories. Library: Chart.js/Canvas.
+        - Report Info: Activities & Suggestions. Goal: Inform. Viz: Styled HTML lists. Interaction: None. Justification: High readability for qualitative text. Method: HTML/Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 280px;
+            width: 100%;
+            max-width: 280px;
+        }
+        .bar-chart-container {
+            position: relative;
+            margin: auto;
+            height: 350px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .tab-active {
+            border-color: #0d9488;
+            color: #0d9488;
+            font-weight: 600;
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #64748b;
+        }
+        .stat-card-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .stat-card-label {
+            font-size: 0.9rem;
+            color: #475569;
+        }
+        .stat-card-change {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .stat-card-change.positive {
+            color: #10b981;
+        }
+        .stat-card-change.negative {
+            color: #ef4444;
+        }
+        .kpi-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-8">
+            <img src="intro-logo-01.png" alt="Client Logo" class="mx-auto mb-4 h-16 sm:h-20 object-contain">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Monthly Marketing Report</h1>
+            <p class="text-slate-500 mt-2">June 2025 Performance Dashboard</p>
+        </header>
+
+        <nav class="mb-8 flex justify-center border-b border-gray-200">
+            <button id="social-tab" class="px-6 py-3 border-b-2 text-lg transition-colors duration-300 tab-active">
+                Social Media
+            </button>
+            <button id="google-tab" class="px-6 py-3 border-b-2 text-lg transition-colors duration-300 tab-inactive">
+                Google Business
+            </button>
+        </nav>
+
+        <main>
+            <!-- Social Media Content -->
+            <section id="social-content">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-semibold text-slate-800">Social Media Performance</h2>
+                    <p class="text-slate-500 mt-1 max-w-3xl mx-auto">This section provides a detailed breakdown of performance metrics for Instagram and Facebook from June 15 to July 12, 2025. Interact with the charts to see detailed breakdowns of audience engagement.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+                    <!-- Instagram Card -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <h3 class="text-xl font-bold mb-4 text-center text-slate-800">Instagram Insights</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mb-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="stat-card-value text-teal-600">2.3K</p>
+                                <p class="stat-card-label">Views</p>
+                                <p class="stat-card-change negative">↓ 29.6%</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="stat-card-value text-teal-600">875</p>
+                                <p class="stat-card-label">Reach</p>
+                                <p class="stat-card-change negative">↓ 66%</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="stat-card-value text-teal-600">66</p>
+                                <p class="stat-card-label">Interactions</p>
+                                <p class="stat-card-change negative">↓ 32.7%</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div>
+                                <h4 class="text-center font-semibold text-slate-700 mb-2">Views by Audience</h4>
+                                <div class="chart-container">
+                                    <canvas id="instaViewsChart"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-center font-semibold text-slate-700 mb-2">Interactions by Audience</h4>
+                                <div class="chart-container">
+                                    <canvas id="instaInteractionsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Facebook Card -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <h3 class="text-xl font-bold mb-4 text-center text-slate-800">Facebook Insights</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center mb-6">
+                             <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="stat-card-value text-teal-600">361</p>
+                                <p class="stat-card-label">Views</p>
+                                <p class="stat-card-change negative">↓ 62.1%</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="stat-card-value text-teal-600">54</p>
+                                <p class="stat-card-label">Reach</p>
+                                <p class="stat-card-change negative">↓ 53%</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="stat-card-value text-teal-600">31</p>
+                                <p class="stat-card-label">Interactions</p>
+                                <p class="stat-card-change positive">↑ 14.8%</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-center font-semibold text-slate-700 mb-2">Views by Audience</h4>
+                                <div class="chart-container">
+                                    <canvas id="fbViewsChart"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-center font-semibold text-slate-700 mb-2">Interactions by Audience</h4>
+                                <div class="chart-container">
+                                    <canvas id="fbInteractionsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <h3 class="text-xl font-bold mb-4 text-slate-800">Key Social Media Activities</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="kpi-icon">🛡️</span><span><strong>Account Security:</strong> Enhanced security features across all social accounts.</span></li>
+                        <li class="flex items-start"><span class="kpi-icon">✍️</span><span><strong>Content Creation:</strong> Published 22 high-quality posts on both Instagram and Facebook.</span></li>
+                        <li class="flex items-start"><span class="kpi-icon">✨</span><span><strong>Instagram Highlights Updated:</strong> Added new images for the Matie, Platinum, Promise, and Edition collections to profile highlights.</span></li>
+                        <li class="flex items-start"><span class="kpi-icon">🚀</span><span><strong>Profile Optimization:</strong> Made general optimizations to profiles for improved visibility and user experience.</span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Google Business Content -->
+            <section id="google-content" class="hidden">
+                 <div class="text-center mb-8">
+                    <h2 class="text-2xl font-semibold text-slate-800">Google Business Profile Performance</h2>
+                    <p class="text-slate-500 mt-1 max-w-3xl mx-auto">This section covers performance from your Google Business Profile for June 2025. The chart below breaks down the 110 total customer interactions into specific actions taken.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-10">
+                    <h3 class="text-xl font-bold mb-4 text-center text-slate-800">Business Profile Interactions Breakdown</h3>
+                    <div class="bar-chart-container">
+                        <canvas id="googleInteractionsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <h3 class="text-xl font-bold mb-4 text-slate-800">Key Google Business Activities</h3>
+                     <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="kpi-icon">💬</span><span><strong>WhatsApp Integration:</strong> Added a direct WhatsApp chat option to the profile for instant customer communication.</span></li>
+                        <li class="flex items-start"><span class="kpi-icon">⭐</span><span><strong>Review Management:</strong> Actively responded to new customer reviews to maintain engagement and reputation.</span></li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <footer class="mt-12 pt-8 border-t border-gray-200">
+             <div class="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-r-lg">
+                <h2 class="text-2xl font-semibold text-amber-900 mb-4">Suggestions for Improvement</h2>
+                <p class="text-amber-800 mb-4">Based on this month's performance, here are some key areas to focus on for even better results next month. These suggestions are aimed at increasing audience engagement and optimizing content strategy.</p>
+                <ul class="space-y-3 text-amber-700">
+                    <li class="flex items-start"><span class="kpi-icon">🎬</span><span><strong>Create More Engaging Videos:</strong> Focus on producing dynamic video content, following the examples previously shared to capture audience attention.</span></li>
+                    <li class="flex items-start"><span class="kpi-icon">🛠️</span><span><strong>Enhance Installation Videos:</strong> The engagement with installation videos has dropped. It's recommended to create more captivating and high-quality videos of the installation process.</span></li>
+                    <li class="flex items-start"><span class="kpi-icon">👨‍👩‍👧‍👦</span><span><strong>Showcase the Team:</strong> Increase profile personalization and trust by sharing more engaging images and videos of the team at work.</span></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socialTab = document.getElementById('social-tab');
+            const googleTab = document.getElementById('google-tab');
+            const socialContent = document.getElementById('social-content');
+            const googleContent = document.getElementById('google-content');
+
+            const tabData = {
+                social: {
+                    tab: socialTab,
+                    content: socialContent,
+                },
+                google: {
+                    tab: googleTab,
+                    content: googleContent,
+                }
+            };
+
+            function switchTab(activeTabKey) {
+                Object.keys(tabData).forEach(key => {
+                    const is_active = key === activeTabKey;
+                    tabData[key].tab.classList.toggle('tab-active', is_active);
+                    tabData[key].tab.classList.toggle('tab-inactive', !is_active);
+                    tabData[key].content.classList.toggle('hidden', !is_active);
+                });
+            }
+
+            socialTab.addEventListener('click', () => switchTab('social'));
+            googleTab.addEventListener('click', () => switchTab('google'));
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#fff',
+                        titleColor: '#333',
+                        bodyColor: '#666',
+                        borderColor: '#ddd',
+                        borderWidth: 1,
+                        padding: 10,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.formattedValue}%`;
+                            }
+                        }
+                    }
+                },
+                cutout: '70%',
+            };
+            
+            new Chart(document.getElementById('instaViewsChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['From Followers', 'From Non-followers'],
+                    datasets: [{
+                        data: [21, 79],
+                        backgroundColor: ['#0d9488', '#99f6e4'],
+                        borderColor: '#ffffff',
+                        borderWidth: 4,
+                        hoverBorderColor: '#ffffff'
+                    }]
+                },
+                options: chartOptions
+            });
+
+            new Chart(document.getElementById('instaInteractionsChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['From Followers', 'From Non-followers'],
+                    datasets: [{
+                        data: [83, 17],
+                        backgroundColor: ['#0f766e', '#5eead4'],
+                         borderColor: '#ffffff',
+                        borderWidth: 4,
+                        hoverBorderColor: '#ffffff'
+                    }]
+                },
+                options: chartOptions
+            });
+            
+            new Chart(document.getElementById('fbViewsChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['From Followers', 'From Non-followers'],
+                    datasets: [{
+                        data: [45.4, 54.6],
+                        backgroundColor: ['#0d9488', '#99f6e4'],
+                         borderColor: '#ffffff',
+                        borderWidth: 4,
+                        hoverBorderColor: '#ffffff'
+                    }]
+                },
+                options: chartOptions
+            });
+
+            new Chart(document.getElementById('fbInteractionsChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['From Followers', 'From Non-followers'],
+                    datasets: [{
+                        data: [35.5, 64.5], // 11 is 35.5% of 31, 20 is 64.5%
+                        backgroundColor: ['#0f766e', '#5eead4'],
+                         borderColor: '#ffffff',
+                        borderWidth: 4,
+                        hoverBorderColor: '#ffffff'
+                    }]
+                },
+                options: chartOptions
+            });
+
+            new Chart(document.getElementById('googleInteractionsChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Calls', 'Direction Requests', 'Website Clicks'],
+                    datasets: [{
+                        label: 'Total Interactions (110)',
+                        data: [33, 49, 27],
+                        backgroundColor: ['#14b8a6', '#5eead4', '#ccfbf1'],
+                        borderColor: ['#0f766e', '#0d9488', '#a7f3d0'],
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                             grid: {
+                                display: false
+                             }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                         tooltip: {
+                            backgroundColor: '#fff',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            borderColor: '#ddd',
+                            borderWidth: 1,
+                            padding: 10,
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
